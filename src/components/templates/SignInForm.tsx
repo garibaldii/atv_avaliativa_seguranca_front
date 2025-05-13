@@ -9,6 +9,7 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import LoadingIcon from "../../../public/LoadingIcon"
+import { login } from "@/services/auth"
 
 
 export const SignInForm = () => {
@@ -24,10 +25,11 @@ export const SignInForm = () => {
 
 
         try {
-            // const result = await signIn(email, password)
+            const result = await login(email, password)
 
             router.push("/pages/crypting")
-            // console.log(result)
+            console.log(result)
+            return
 
         } catch (error: any) {
             setError(error.response.data.message) //takes the error from backend error treatment
