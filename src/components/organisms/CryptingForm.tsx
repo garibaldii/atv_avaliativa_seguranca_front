@@ -5,7 +5,6 @@ import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 
 import { useToast } from "@/hooks/use-toast"
-import { ToastAction } from "@radix-ui/react-toast"
 
 import {
     Card,
@@ -16,76 +15,92 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { useState } from "react"
+import { cryptText } from "@/services/crypt"
+import LoadingIcon from "../../../public/LoadingIcon"
 
 export const CryptingForm = () => {
 
     const { toast } = useToast()
 
-    const [message, setMessage] = useState("")
-    const [steps, setSteps] = useState("")
+    const [text, setText] = useState("")
+    const [shift, setShift] = useState(0)
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log("Mensagem:", message)
-        console.log("Ciclos:", steps)
-
-        toast({
-            title: `Mensagem Criptografada:`,
-            description: `Hash:`,
-            action: (
-                <ToastAction
-                    altText="Copiar Hash"
-                    onClick={() => navigator.clipboard.writeText(steps)}
-                >
-                    Copiar
-                </ToastAction>
-            )
-        })
 
         try {
-            // lógica de criptografia aqui
-        } catch (error) {
-            console.error(error)
+
+            setLoading(true)
+            const result = await cryptText(text, shift)
+
+            console.log(result)
+
+            toast({
+                title: `Mensagem Criptografada: ${result.encryptedText}`,
+                description: `Hash: ${result.hash}`,
+            })
+
+        } catch (error: any) {
+            console.log("deu erro", error)
+            setError(error.response.data.message)
+            setLoading(false)
+        } finally {
+            setLoading(false)
         }
+
     }
 
     return (
         <form onSubmit={handleSubmit}>
             <Card>
                 <CardHeader>
-                    <CardTitle>Criptografia de César</CardTitle>
+                    <CardTitle>Criptografar</CardTitle>
                     <CardDescription>
                         Digite uma mensagem e a quantidade de ciclos.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                     <div className="space-y-1">
-                        <Label htmlFor="message">Mensagem</Label>
+                        <Label htmlFor="text">Mensagem</Label>
                         <Input
-                            id="message"
+                            id="text"
                             placeholder="Digite uma mensagem"
-                            onChange={(e) => setMessage(e.target.value)}
-                            value={message}
+                            onChange={(e) => setText(e.target.value)}
+                            value={text}
                             required
+                            className={`${error ? 'border-red-500' : 'border-transparent'}`}
+
                         />
+
                     </div>
                     <div className="space-y-1">
-                        <Label htmlFor="steps">Ciclos</Label>
+                        <Label htmlFor="shift">Ciclos</Label>
                         <Input
-                            id="steps"
+                            id="shift"
                             placeholder="Quantidade de Ciclos"
                             type="number"
                             min="1"
-                            onChange={(e) => setSteps(e.target.value)}
-                            value={steps}
+                            onChange={(e) => setShift(Number(e.target.value))}
+                            value={shift ?? ""}
                             required
+                            onKeyDown={(e) => {
+                                if (e.key === "," || e.key === ".") {
+                                    e.preventDefault()
+                                }
+                            }}
+                            className={`${error ? 'border-red-500' : 'border-transparent'}`}
+
                         />
                     </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex flex-col">
                     <Button type="submit" className="w-full">
-                        Criptografar
+                        {loading ? <LoadingIcon /> : "Criptografar"}
                     </Button>
+                <p className="text-red-700">{error}</p>
                 </CardFooter>
             </Card>
         </form>
