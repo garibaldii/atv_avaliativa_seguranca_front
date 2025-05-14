@@ -23,7 +23,7 @@ export const CryptingForm = () => {
     const { toast } = useToast()
 
     const [text, setText] = useState("")
-    const [shift, setShift] = useState(0)
+    const [shift, setShift] = useState<number | undefined>(undefined)
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
@@ -34,7 +34,7 @@ export const CryptingForm = () => {
         try {
 
             setLoading(true)
-            const result = await cryptText(text, shift)
+            const result = await cryptText(text, Number(shift))
 
             console.log(result)
 
@@ -82,9 +82,8 @@ export const CryptingForm = () => {
                             id="shift"
                             placeholder="Quantidade de Ciclos"
                             type="number"
-                            min="1"
                             onChange={(e) => setShift(Number(e.target.value))}
-                            value={shift ?? ""}
+                            value={shift}
                             required
                             onKeyDown={(e) => {
                                 if (e.key === "," || e.key === ".") {
@@ -100,7 +99,7 @@ export const CryptingForm = () => {
                     <Button type="submit" className="w-full">
                         {loading ? <LoadingIcon /> : "Criptografar"}
                     </Button>
-                <p className="text-red-700">{error}</p>
+                    <p className="text-red-700">{error}</p>
                 </CardFooter>
             </Card>
         </form>
