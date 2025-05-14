@@ -53,7 +53,7 @@ export const DecryptingForm = () => {
                 <CardHeader>
                     <CardTitle>Descriptografar</CardTitle>
                     <CardDescription>
-                        Digite a mensagem criptografada e o hash.
+                        Digite a mensagem criptografada e seu hash correspondente.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
