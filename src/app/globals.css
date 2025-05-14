@@ -28,7 +28,7 @@ body {
 }
 
 .bg-custom-lds{
-  @apply min-h-screen bg-gradient-to-b from-gray-100 via-slate-300 to-[#0C2D34];
+  @apply min-h-screen bg-gradient-to-b from-gray-100 via-slate-300 to-[#3c3c3c];
 }
 
 .bg-custom-lds-2{
